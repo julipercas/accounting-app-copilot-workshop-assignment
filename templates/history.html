@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Transaction History - Accounting System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Transaction History</h2>
+</div>
+
+{% if transactions %}
+    <div class="history-table-container">
+        <table class="transaction-table">
+            <thead>
+                <tr>
+                    <th>Date & Time</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Balance Before</th>
+                    <th>Balance After</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for txn in transactions %}
+                <tr class="txn-{{ txn.type }}">
+                    <td>{{ txn.timestamp|format_datetime }}</td>
+                    <td>{{ txn.type|transaction_type_label }}</td>
+                    <td>{{ txn.amount|format_currency }}</td>
+                    <td>{{ txn.balance_before|format_currency }}</td>
+                    <td>{{ txn.balance_after|format_currency }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p class="transaction-count">Total: {{ transactions|length }} transaction(s)</p>
+    </div>
+{% else %}
+    <p class="no-data">No transaction history available yet.</p>
+    <div class="action-buttons">
+        <a href="{{ url_for('credit') }}" class="btn btn-success">Credit Account</a>
+        <a href="{{ url_for('debit') }}" class="btn btn-danger">Debit Account</a>
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Statistics - Accounting System{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2>Account Statistics</h2>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>Total Credits</h3>
+        <p class="stat-value positive">{{ stats.total_credits|format_currency }}</p>
+    </div>
+    <div class="stat-card">
+        <h3>Total Debits</h3>
+        <p class="stat-value negative">{{ stats.total_debits|format_currency }}</p>
+    </div>
+    <div class="stat-card">
+        <h3>Net Change</h3>
+        <p class="stat-value {% if stats.net_change >= 0 %}positive{% else %}negative{% endif %}">
+            {{ stats.net_change|format_currency }}
+        </p>
+    </div>
+    <div class="stat-card">
+        <h3>Total Transactions</h3>
+        <p class="stat-value">{{ stats.count }}</p>
+    </div>
+</div>
+
+<div class="chart-container">
+    <h3>Balance Over Time</h3>
+    <canvas id="balanceChart"></canvas>
+</div>
+
+<div class="chart-container">
+    <h3>Credits vs Debits</h3>
+    <canvas id="transactionChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Parse transaction data
+    const transactions = {{ transactions_json|safe }};
+    
+    // Format timestamp as "hh:mm YY:MM:DD"
+    function formatTimestamp(isoString) {
+        const date = new Date(isoString);
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const year = String(date.getFullYear()).slice(-2);
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${hours}:${minutes} ${year}:${month}:${day}`;
+    }
+    
+    // Balance over time chart
+    if (transactions.length > 0) {
+        const balanceCtx = document.getElementById('balanceChart').getContext('2d');
+        new Chart(balanceCtx, {
+            type: 'line',
+            data: {
+                labels: transactions.map(t => formatTimestamp(t.timestamp)),
+                datasets: [{
+                    label: 'Balance',
+                    data: transactions.map(t => t.balance),
+                    borderColor: '#3498db',
+                    backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                    tension: 0.1,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return '$' + context.parsed.y.toFixed(2);
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toFixed(2);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // Credits vs Debits chart
+    const txnCtx = document.getElementById('transactionChart').getContext('2d');
+    new Chart(txnCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Credits', 'Debits'],
+            datasets: [{
+                label: 'Amount',
+                data: [
+                    {{ stats.total_credits }},
+                    {{ stats.total_debits }}
+                ],
+                backgroundColor: [
+                    'rgba(46, 204, 113, 0.7)',
+                    'rgba(231, 76, 60, 0.7)'
+                ],
+                borderColor: [
+                    '#2ecc71',
+                    '#e74c3c'
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return '$' + context.parsed.y.toFixed(2);
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value.toFixed(2);
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

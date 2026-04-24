@@ -1,0 +1,54 @@
+{
+  "balance": "1001.00",
+  "transactions": [
+    {
+      "timestamp": "2026-04-02T14:29:12.486582",
+      "type": "credit",
+      "amount": "3",
+      "balance_before": "1000.00",
+      "balance_after": "1003.00"
+    },
+    {
+      "timestamp": "2026-04-02T14:29:21.418701",
+      "type": "debit",
+      "amount": "7",
+      "balance_before": "1003.00",
+      "balance_after": "996.00"
+    },
+    {
+      "timestamp": "2026-04-02T14:42:22.846623",
+      "type": "credit",
+      "amount": "100",
+      "balance_before": "996.00",
+      "balance_after": "1096.00"
+    },
+    {
+      "timestamp": "2026-04-02T14:42:30.563638",
+      "type": "credit",
+      "amount": "8",
+      "balance_before": "1096.00",
+      "balance_after": "1104.00"
+    },
+    {
+      "timestamp": "2026-04-02T14:42:34.444897",
+      "type": "debit",
+      "amount": "99",
+      "balance_before": "1104.00",
+      "balance_after": "1005.00"
+    },
+    {
+      "timestamp": "2026-04-02T14:42:42.769837",
+      "type": "debit",
+      "amount": "9",
+      "balance_before": "1005.00",
+      "balance_after": "996.00"
+    },
+    {
+      "timestamp": "2026-04-02T14:46:18.987422",
+      "type": "credit",
+      "amount": "5",
+      "balance_before": "996.00",
+      "balance_after": "1001.00"
+    }
+  ]
+}
